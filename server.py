@@ -1,21 +1,16 @@
-#pip install flask pyserial
-
-from flask import Flask, jsonify
-import serial
-
-app = Flask(__name__)
-ser = serial.Serial('/dev/ttyACM0', 115200)  # Adjust port as needed
-
 @app.route('/data')
 def get_data():
     try:
         # Read data from the micro:bit
         data = ser.readline().decode('utf-8').strip()
-        temperature, humidity = data.split(',')
-        return jsonify({'temperature': temperature, 'humidity': humidity})
+        print('Received data:', data)  # Debugging output
+        parts = data.split(',')
+        if len(parts) == 2:
+            temperature, humidity = parts
+            print({'temperature': temperature, 'humidity': humidity})  # Debugging output
+            return jsonify({'temperature': temperature, 'humidity': humidity})
+        else:
+            raise ValueError('Expected 2 parts, got {}'.format(len(parts)))
     except Exception as e:
         print('Error:', e)
         return jsonify({'error': str(e)})
-
-if __name__ == '__main__':
-    app.run(debug=True)
