@@ -2,22 +2,20 @@
 
 from flask import Flask, jsonify
 import serial
-import time
 
 app = Flask(__name__)
-arduino = serial.Serial(port='COM3', baudrate=9600, timeout=.1)  # Adjust COM port if necessary
+ser = serial.Serial('/dev/ttyACM0', 115200)  # Adjust port as needed
 
-def read_from_arduino():
-    data = arduino.readline().decode('utf-8').strip()
-    if data:
-        temp, humidity = data.split(',')
-        return {'temperature': temp, 'humidity': humidity}
-    return {'temperature': None, 'humidity': None}
-
-@app.route('/data', methods=['GET'])
+@app.route('/data')
 def get_data():
-    data = read_from_arduino()
-    return jsonify(data)
+    try:
+        # Read data from the micro:bit
+        data = ser.readline().decode('utf-8').strip()
+        temperature, humidity = data.split(',')
+        return jsonify({'temperature': temperature, 'humidity': humidity})
+    except Exception as e:
+        print('Error:', e)
+        return jsonify({'error': str(e)})
 
 if __name__ == '__main__':
     app.run(debug=True)

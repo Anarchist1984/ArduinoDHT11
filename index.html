@@ -3,44 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Temperature Monitor</title>
+    <title>Temperature and Humidity Monitor</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f0f0f0;
-        }
-        #data {
             text-align: center;
         }
+        #data {
+            margin-top: 50px;
+        }
         .value {
-            font-size: 2em;
-            margin: 10px 0;
+            font-size: 24px;
+            margin-bottom: 20px;
         }
     </style>
 </head>
 <body>
     <div id="data">
         <h1>Temperature and Humidity</h1>
-        <div class="value" id="temperature">Temperature: -- °C</div>
-        <div class="value" id="humidity">Humidity: -- %</div>
+        <div class="value" id="temperature">Temperature: --</div>
+        <div class="value" id="humidity">Humidity: --</div>
     </div>
 
     <script>
+        // Function to update temperature and humidity values
+        function updateData(temperature, humidity) {
+            document.getElementById('temperature').textContent = `Temperature: ${temperature} °C`;
+            document.getElementById('humidity').textContent = `Humidity: ${humidity} %`;
+        }
+
+        // Function to fetch data from the micro:bit
         async function fetchData() {
             try {
                 const response = await fetch('/data');
                 const data = await response.json();
-                document.getElementById('temperature').innerText = `Temperature: ${data.temperature} °C`;
-                document.getElementById('humidity').innerText = `Humidity: ${data.humidity} %`;
+                updateData(data.temperature, data.humidity);
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
         }
 
+        // Fetch data every 2 seconds
         setInterval(fetchData, 2000);
     </script>
 </body>
