@@ -5,7 +5,7 @@ import serial
 import time
 
 app = Flask(__name__)
-arduino = serial.Serial(port='COM3', baudrate=9600, timeout=.1)
+arduino = serial.Serial(port='COM3', baudrate=9600, timeout=.1)  # Adjust COM port if necessary
 
 def read_from_arduino():
     data = arduino.readline().decode('utf-8').strip()
